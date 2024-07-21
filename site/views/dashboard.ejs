@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+/* Общие стили страницы */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Заголовки */
+h1, h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Стили для контейнера */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+/* Стили для таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Стили для кнопок */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Стили для кнопки скопировать API ключ */
+.copy-button {
+    margin-left: 15px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.copy-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Стили для сообщения об успешном копировании */
+.copy-message {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <%= username %></h1>
+        <p>
+            Your API Key: 
+            <span id="api-key"><%= apiKey %></span>
+            <button class="copy-button" onclick="copyApiKey()">Copy</button>
+        </p>
+        <h2>Your Transactions</h2>
+        <% if (transactions.length === 0) { %>
+            <p>No transactions found.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% transactions.forEach(transaction => { %>
+                        <tr>
+                            <td><%= transaction.id %></td>
+                            <td><%= transaction.amount %></td>
+                            <td><%= transaction.status %></td>
+                            <td><%= transaction.created_at %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+        <p id="copy-message" class="copy-message"></p>
+    </div>
+
+    <script>
+        function copyApiKey() {
+            // Получаем текст API ключа
+            var apiKey = document.getElementById('api-key').textContent;
+
+            // Создаем временный элемент input
+            var tempInput = document.createElement('input');
+            tempInput.value = apiKey;
+            document.body.appendChild(tempInput);
+
+            // Выделяем текст и копируем его в буфер обмена
+            tempInput.select();
+            document.execCommand('copy');
+
+            // Удаляем временный элемент
+            document.body.removeChild(tempInput);
+
+            // Показываем сообщение об успешном копировании
+            document.getElementById('copy-message').textContent = 'API Key copied to clipboard!';
+            
+            // Убираем сообщение через 3 секунды
+            setTimeout(() => {
+                document.getElementById('copy-message').textContent = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

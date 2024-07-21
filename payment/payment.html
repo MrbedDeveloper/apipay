@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 80%;
+      max-width: 600px;
+    }
+    .amount {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .payment-method {
+      margin: 20px 0;
+    }
+    .payment-method img {
+      width: 120px;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+    }
+    .payment-method button {
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .payment-method button:hover {
+      background-color: #0056b3;
+    }
+    .test-button {
+      background-color: #28a745;
+    }
+    .test-button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Payment Options</h1>
+    <div class="amount">
+      Amount: $<span id="amount"></span>
+    </div>
+    <div class="payment-method">
+      <h2>Pay with Credit Card</h2>
+      <img src="https://via.placeholder.com/120x60.png?text=Credit+Card" alt="Credit Card">
+      <button onclick="payWith('credit-card')">Pay with Credit Card</button>
+    </div>
+    <div class="payment-method">
+      <h2>Pay with Yandex Money</h2>
+      <img src="https://via.placeholder.com/120x60.png?text=Yandex+Money" alt="Yandex Money">
+      <button onclick="payWith('yandex-money')">Pay with Yandex Money</button>
+    </div>
+    <div>
+      <button class="test-button" onclick="testPayment()">Test Payment</button>
+    </div>
+  </div>
+  <script>
+    // Получение id из URL-параметров
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    // Функция для получения данных о платеже
+    function fetchPaymentDetails() {
+      fetch(`/api/payments/${id}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.querySelector('.container').innerHTML = `<h1>Error</h1><p>${data.error}</p>`;
+          } else {
+            document.getElementById('amount').textContent = data.amount || '0';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.querySelector('.container').innerHTML = `<h1>Error</h1><p>Failed to load payment details.</p>`;
+        });
+    }
+
+    // Загружаем данные при загрузке страницы
+    fetchPaymentDetails();
+
+    // Функция для обработки выбора способа оплаты
+    function payWith(method) {
+      alert(`You chose to pay with ${method}.`);
+      // Реализуйте логику для обработки платежа
+    }
+
+    // Функция для тестирования успешного платежа
+    function testPayment() {
+      fetch(`/api/payments/${id}/success`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Payment successfully marked as completed.');
+          } else {
+            alert('Failed to mark payment as completed.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to mark payment as completed.');
+        });
+    }
+  </script>
+</body>
+</html>
